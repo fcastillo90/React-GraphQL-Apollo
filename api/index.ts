@@ -35,7 +35,6 @@ const resolvers = {
   Query: {
     data: (_parent, {page, size, sort}) => {
       if (!sort) return mockData.slice(page*size, page*size + size)
-      console.log(sort)
       return mockData.sort((a, b) => sorting({field: sort.field, sort: sort.sort, a, b})).slice(page*size, page*size + size)
     },
   },
