@@ -10,6 +10,12 @@ export interface Datum {
   language?: string;
 }
 
+export interface Data {
+  list: Datum[];
+  totalQuery: number;
+}
+
 export interface QueryResponse {
-  data: Datum[]
+  data: Data;
+  total: number;
 }

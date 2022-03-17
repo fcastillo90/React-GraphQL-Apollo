@@ -20,13 +20,19 @@ const typeDefs = gql`
     language: String
   }
 
+  type Response {
+    list: [Datum!]
+    totalQuery: Int!
+  }
+
   input GridSortItem {
     field: String
     sort: String
   }
 
   type Query {
-    data(page: Int, size: Int, sort: GridSortItem): [Datum!]
+    data(page: Int, size: Int, sort: GridSortItem, search: String): Response!
+    total: Int!
   }
 `;
 
@@ -34,13 +40,29 @@ const typeDefs = gql`
 // schema. This resolver retrieves books from the "books" array above.
 const resolvers = {
   Query: {
-    data: (_parent, {page, size, sort}) => {
-      if (!sort) return mockData.slice(page*size, page*size + size)
+    data(_parent, {page, size, sort, search}) {
+      const data = search ? 
+          mockData.filter((mock) => mock.first_name.toLowerCase().includes(search.toLowerCase())) 
+        : 
+          mockData
 
-      return mockData.sort(
-        (a, b) => sorting({field: sort.field, sort: sort.sort, a, b})
-      ).slice(page*size, page*size + size)
+      const response = {
+        list: [],
+        totalQuery: data.length
+      }
+
+      sort ? 
+        response.list = data.sort(
+          (a, b) => sorting({field: sort.field, sort: sort.sort, a, b})
+        ).slice(page*size, page*size + size)
+      :
+        response.list = data.slice(page*size, page*size + size)
+      
+      return response
     },
+    total() { 
+      return  mockData.length 
+    }
   },
 };
 
