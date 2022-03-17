@@ -1,4 +1,5 @@
 
+require('dotenv').config();
 const { ApolloServer, gql } = require('apollo-server');
 const { sorting } = require("./utils.ts");
 const mockData = require('../MOCK_DATA.json');
@@ -35,7 +36,10 @@ const resolvers = {
   Query: {
     data: (_parent, {page, size, sort}) => {
       if (!sort) return mockData.slice(page*size, page*size + size)
-      return mockData.sort((a, b) => sorting({field: sort.field, sort: sort.sort, a, b})).slice(page*size, page*size + size)
+      
+      return mockData.sort(
+        (a, b) => sorting({field: sort.field, sort: sort.sort, a, b})
+      ).slice(page*size, page*size + size)
     },
   },
 };
@@ -45,6 +49,6 @@ const resolvers = {
 const server = new ApolloServer({ typeDefs, resolvers });
 
 // The `listen` method launches a web server.
-server.listen(1010).then(({ url }) => {
+server.listen(process.env.REACT_APP_APOLLO_SERVER_PORT).then(({ url }) => {
   console.log(`🚀  Server ready at ${url}`);
 });

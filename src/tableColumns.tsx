@@ -1,7 +1,19 @@
 import { Avatar } from "@mui/material"
 import { GridRenderCellParams } from "@mui/x-data-grid";
 
-const columns = [
+export const keys = [
+  "id",
+  "first_name",
+  "last_name",
+  "email",
+  "gender",
+  "avatar",
+  "company_name",
+  "job_title",
+  "language"
+]
+
+export const columns = [
   { field: 'id', headerName: 'ID' },
   {
     field: 'avatar',

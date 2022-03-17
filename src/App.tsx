@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 import { gql, useQuery } from '@apollo/client';
 import { QueryResponse } from './types';
 import { DataGrid, GridSortItem } from '@mui/x-data-grid';
@@ -7,7 +7,7 @@ import columns from './tableColumns'
 
 
 const QUERY = gql`
-  query ExampleQuery($page: Int, $size: Int, $sort: GridSortItem) {
+  query GetData($page: Int, $size: Int, $sort: GridSortItem) {
     data(page: $page, size: $size, sort: $sort) {
       id,
       first_name,
@@ -27,26 +27,19 @@ function App() {
   const [page, setCurrentPage] = useState(0)
   const [sort, setSort] = useState<null | GridSortItem>(null)
 
+  const variables = useMemo(() => ({
+    page,
+    size,
+    sort
+  }), [page, size, sort]);
+
   const { loading, data, fetchMore } = useQuery<QueryResponse>(
-    QUERY, 
-    {
-      variables: {
-        page,
-        size,
-        sort
-      },
-    }
+    QUERY, { variables }
   );
 
   useEffect(() => {
-    fetchMore({
-      variables: {
-        page,
-        size,
-        sort
-      },
-    })
-  }, [page, fetchMore, size, sort])
+    fetchMore({ variables })
+  }, [fetchMore, variables])
 
   return (
     <Container disableGutters>
