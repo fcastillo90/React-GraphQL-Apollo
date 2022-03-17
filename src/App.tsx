@@ -2,30 +2,14 @@ import React, { useEffect, useMemo, useState } from 'react';
 import { gql, useQuery } from '@apollo/client';
 import { QueryResponse } from './types';
 import { DataGrid, GridSortItem } from '@mui/x-data-grid';
-import { Paper, Grid, Container } from '@mui/material';
+import { Paper, Grid, Container, FormControlLabel, FormGroup, Checkbox } from '@mui/material';
 import columns from './tableColumns'
-
-
-const QUERY = gql`
-  query GetData($page: Int, $size: Int, $sort: GridSortItem) {
-    data(page: $page, size: $size, sort: $sort) {
-      id,
-      first_name,
-      last_name,
-      email,
-      gender,
-      avatar,
-      company_name,
-      job_title,
-      language,
-    }
-  }
-`;
 
 function App() {
   const [size, setPageSize] = useState(20)
   const [page, setCurrentPage] = useState(0)
   const [sort, setSort] = useState<null | GridSortItem>(null)
+  const [columnState, setColumnState] = useState(columns)
 
   const variables = useMemo(() => ({
     page,
@@ -33,27 +17,66 @@ function App() {
     sort
   }), [page, size, sort]);
 
+
+  const QUERY = gql`
+  query GetData($page: Int, $size: Int, $sort: GridSortItem) {
+    data(page: $page, size: $size, sort: $sort) {
+      ${columnState.filter((value) => value.visible).map((value) => (value.field)).join()}
+    }
+  }
+  `;
+
   const { loading, data, fetchMore } = useQuery<QueryResponse>(
     QUERY, { variables }
   );
+
+  const handleToggleVisibility = (value: boolean, index: number) => {
+    const newState = [...columnState]
+    newState[index].visible = value
+    setColumnState(newState)
+  }
+
 
   useEffect(() => {
     fetchMore({ variables })
   }, [fetchMore, variables])
 
   return (
-    <Container disableGutters>
-      <Grid container maxWidth="xl">
-        <Grid item xs={12}>
+    <Container disableGutters maxWidth="xl">
+      <Grid container maxWidth="xl" spacing="4">
+        <Grid item xs={12} sm={2} md={1}>
           <Paper
             sx={{
-              height: '100vh'
+              height: '95vh'
+            }}
+          >
+            <FormGroup>
+              {columnState.map((value, index) => {
+                return (
+                  <FormControlLabel 
+                    key={value.field}
+                    control={<Checkbox checked={value.visible} />} 
+                    label={value.headerName} 
+                    onChange={(event) => handleToggleVisibility(
+                      (event as React.ChangeEvent<HTMLInputElement>).target.checked, 
+                      index
+                    )}
+                  />
+                )
+              })}
+            </FormGroup>
+          </Paper>
+        </Grid>
+        <Grid item xs={12} sm md>
+          <Paper
+            sx={{
+              height: '95vh'
             }}
           >
             <DataGrid
               rows={data?.data || []}
               rowCount={1000}
-              columns={columns}
+              columns={columnState.filter((value) => value.visible)}
               page={page}
               pageSize={size}
               loading={loading}
