@@ -25,6 +25,10 @@
     "typescript": "^4.6.2",
     "web-vitals": "^2.1.4"
   },
+  "author": {
+    "name": "Francisco Castillo",
+    "email": "fcastillo90@gmail.com"
+  },
   "scripts": {
     "start": "npm run reactClient & npm run apolloServer",
     "build": "react-scripts build",

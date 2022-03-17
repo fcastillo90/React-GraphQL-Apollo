@@ -36,7 +36,7 @@ const resolvers = {
   Query: {
     data: (_parent, {page, size, sort}) => {
       if (!sort) return mockData.slice(page*size, page*size + size)
-      
+
       return mockData.sort(
         (a, b) => sorting({field: sort.field, sort: sort.sort, a, b})
       ).slice(page*size, page*size + size)
@@ -49,6 +49,7 @@ const resolvers = {
 const server = new ApolloServer({ typeDefs, resolvers });
 
 // The `listen` method launches a web server.
-server.listen(process.env.REACT_APP_APOLLO_SERVER_PORT).then(({ url }) => {
+server.listen(process.env.REACT_APP_APOLLO_SERVER_PORT)
+.then(({ url }) => {
   console.log(`🚀  Server ready at ${url}`);
 });
