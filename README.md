@@ -1,5 +1,7 @@
 # REACT + TYPESCRIPT + GRAPHQL
 
+## Author: Francisco Castillo
+
 ## Features
 
 This project contains:
@@ -23,7 +25,5 @@ In the project directory, you can run:
 Runs the app in the development mode.\
 Open [http://localhost:3000](http://localhost:3000) to view it in the browser.
 
-The graphql server will run on port `1010` by default.
+The graphql server will run on port `1010` by default.\
 Open [http://localhost:1010](http://localhost:1010) to view Apollo sandbox
-
-## Author: Francisco Castillo
